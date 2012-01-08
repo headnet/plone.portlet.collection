@@ -67,6 +67,8 @@ class ICollectionPortlet(IPortletDataProvider):
         required=True,
         default=False)
 
+    portlet_style = base.PortletStyleField
+
 
 class Assignment(base.Assignment):
     """
@@ -85,13 +87,14 @@ class Assignment(base.Assignment):
     show_dates = False
 
     def __init__(self, header=u"", target_collection=None, limit=None,
-                 random=False, show_more=True, show_dates=False):
+                 random=False, show_more=True, show_dates=False, portlet_style=""):
         self.header = header
         self.target_collection = target_collection
         self.limit = limit
         self.random = random
         self.show_more = show_more
         self.show_dates = show_dates
+        self.portlet_style = portlet_style
 
     @property
     def title(self):
@@ -123,7 +126,10 @@ class Renderer(base.Renderer):
     def css_class(self):
         header = self.data.header
         normalizer = getUtility(IIDNormalizer)
-        return "portlet-collection-%s" % normalizer.normalize(header)
+        css = ["portlet-collection-%s" % normalizer.normalize(header)]
+        if self.data.portlet_style.strip():
+            css.append(self.data.portlet_style.strip())
+        return " ".join(css)
 
     @memoize
     def results(self):

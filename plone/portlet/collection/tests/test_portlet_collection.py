@@ -68,11 +68,12 @@ class TestRenderer(TestCase):
         return getMultiAdapter((context, request, view, manager, assignment), IPortletRenderer)
 
     def test_render(self):
-        r = self.renderer(context=self.portal, assignment=collection.Assignment(header=u"title"))
+        r = self.renderer(context=self.portal, assignment=collection.Assignment(header=u"title", portlet_style="my-custom-style"))
         r = r.__of__(self.folder)
         r.update()
         output = r.render()
         self.assertTrue('title' in output)
+        self.assertTrue('my-custom-style' in output)
 
     def test_collection_path_unicode(self):
         # Cover problem in #9184
@@ -86,6 +87,11 @@ class TestRenderer(TestCase):
         r = self.renderer(context=self.portal,
                           assignment=collection.Assignment(header=u"Welcome text"))
         self.assertEquals('portlet-collection-welcome-text', r.css_class())
+
+    def test_css_class_with_portlet_style(self):
+        r = self.renderer(context=self.portal,
+                          assignment=collection.Assignment(header=u"Welcome text", portlet_style="foo bar"))
+        self.assertEquals('portlet-collection-welcome-text foo bar', r.css_class())
 
 
 class TestCollectionQuery(TestCase):
