@@ -151,12 +151,13 @@ class Renderer(base.Renderer):
         collection = self.collection()
         if collection is not None:
             limit = self.data.limit
+
             try:
                 results = collection.results()
             except:
                 results = collection.queryCatalog()
 
-            #results = results._sequence
+            results = results._sequence
 
             if limit and limit > 0:
                 results = results[:limit]
