@@ -15,7 +15,7 @@
         <span class="portletTopRight"></span>
     </dt>
 
-    <tal:events tal:repeat="obj view/results">
+    <tal:block tal:repeat="obj view/results">
     <dd class="portletItem"
         tal:define="oddrow repeat/obj/odd;
                     useView    python:obj.portal_type in viewActions;
@@ -28,7 +28,7 @@
            tal:attributes="href itemUrl;
                            title obj/Description">
             <img tal:replace="structure item_icon/html_tag" />
-            <span tal:replace="obj/pretty_title_or_id">
+            <span tal:replace="obj/Title">
              Title
             </span>
             <span class="portletItemDetails"
@@ -38,7 +38,12 @@
             </span>
         </a>
     </dd>
-    </tal:events>
+    </tal:block>
+    <tal:block tal:condition="not:view/results">
+      <span tal:content="structure view/no_results_text" tal:omit-tag="">
+        No results were found
+      </span>
+    </tal:block>
 
     <dd class="portletFooter">
         <span class="portletBottomLeft"></span>

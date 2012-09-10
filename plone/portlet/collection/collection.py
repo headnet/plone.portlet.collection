@@ -14,9 +14,10 @@ from zope.formlib import form
 from plone.memoize.instance import memoize
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from plone.app.vocabularies.catalog import SearchableTextSourceBinder
 from plone.app.form.widgets.uberselectionwidget import UberSelectionWidget
-
+from plone.app.form.widgets.wysiwygwidget import WYSIWYGWidget
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from plone.portlet.collection import PloneMessageFactory as _
@@ -67,6 +68,13 @@ class ICollectionPortlet(IPortletDataProvider):
         required=True,
         default=False)
 
+    no_results_text = schema.Text(
+        title=_(u"No results"),
+        description=_(u"The entered text will be displayed to the user when "
+                     u"no results were found"),
+        required=False,
+        default=u'')
+
 
 class Assignment(base.Assignment):
     """
@@ -83,15 +91,18 @@ class Assignment(base.Assignment):
     random = False
     show_more = True
     show_dates = False
+    no_results_text = ''
 
     def __init__(self, header=u"", target_collection=None, limit=None,
-                 random=False, show_more=True, show_dates=False):
+                 random=False, show_more=True, show_dates=False,
+                 no_results_text=''):
         self.header = header
         self.target_collection = target_collection
         self.limit = limit
         self.random = random
         self.show_more = show_more
         self.show_dates = show_dates
+        self.no_results_text = no_results_text
 
     @property
     def title(self):
@@ -111,7 +122,7 @@ class Renderer(base.Renderer):
 
     @property
     def available(self):
-        return len(self.results())
+        return len(self.results()) or self.data.no_results_text
 
     def collection_url(self):
         collection = self.collection()
@@ -132,19 +143,24 @@ class Renderer(base.Renderer):
         else:
             return self._standard_results()
 
+    def no_results_text(self):
+        return self.data.no_results_text
+
     def _standard_results(self):
         results = []
         collection = self.collection()
         if collection is not None:
             limit = self.data.limit
-            if limit and limit > 0:
-                # pass on batching hints to the catalog
-                results = collection.queryCatalog(batch=True, b_size=limit)
-                results = results._sequence
-            else:
+            try:
+                results = collection.results()
+            except:
                 results = collection.queryCatalog()
+
+            #results = results._sequence
+
             if limit and limit > 0:
                 results = results[:limit]
+
         return results
 
     def _random_results(self):
@@ -193,6 +209,7 @@ class Renderer(base.Renderer):
 class AddForm(base.AddForm):
 
     form_fields = form.Fields(ICollectionPortlet)
+    form_fields['no_results_text'].custom_widget = WYSIWYGWidget
     form_fields['target_collection'].custom_widget = UberSelectionWidget
 
     label = _(u"Add Collection Portlet")
@@ -206,6 +223,7 @@ class AddForm(base.AddForm):
 class EditForm(base.EditForm):
 
     form_fields = form.Fields(ICollectionPortlet)
+    form_fields['no_results_text'].custom_widget = WYSIWYGWidget
     form_fields['target_collection'].custom_widget = UberSelectionWidget
 
     label = _(u"Edit Collection Portlet")
