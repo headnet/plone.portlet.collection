@@ -157,7 +157,12 @@ class Renderer(base.Renderer):
             except:
                 results = collection.queryCatalog()
 
-            results = results._sequence
+            try:
+                results = results._sequence
+            except AttributeError:
+                results = results._basesequence
+            except Exception as e:
+                raise e
 
             if limit and limit > 0:
                 results = results[:limit]
