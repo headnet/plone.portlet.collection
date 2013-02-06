@@ -30,28 +30,32 @@ class ICollectionPortlet(IPortletDataProvider):
     header = schema.TextLine(
         title=_(u"Portlet header"),
         description=_(u"Title of the rendered portlet"),
-        required=True)
+        required=True
+    )
 
     target_collection = schema.Choice(
         title=_(u"Target collection"),
         description=_(u"Find the collection which provides the items to list"),
         required=True,
         source=SearchableTextSourceBinder(
-            {'portal_type': ('Topic', 'Collection')},
-            default_query='path:'))
+            {'portal_type': ('Topic', 'Collection')}
+        )
+    )
 
     limit = schema.Int(
         title=_(u"Limit"),
         description=_(u"Specify the maximum number of items to show in the "
                       u"portlet. Leave this blank to show all items."),
-        required=False)
+        required=False
+    )
 
     random = schema.Bool(
         title=_(u"Select random items"),
         description=_(u"If enabled, items will be selected randomly from the "
                       u"collection, rather than based on its sort order."),
         required=True,
-        default=False)
+        default=False
+    )
 
     show_more = schema.Bool(
         title=_(u"Show more... link"),
@@ -59,21 +63,24 @@ class ICollectionPortlet(IPortletDataProvider):
                       u"of the portlet, linking to the underlying "
                       u"Collection."),
         required=True,
-        default=True)
+        default=True
+    )
 
     show_dates = schema.Bool(
         title=_(u"Show dates"),
         description=_(u"If enabled, effective dates will be shown underneath "
                       u"the items listed."),
         required=True,
-        default=False)
+        default=False
+    )
 
     no_results_text = schema.Text(
         title=_(u"No results"),
         description=_(u"The entered text will be displayed to the user when "
-                     u"no results were found"),
+                      u"no results were found"),
         required=False,
-        default=u'')
+        default=u''
+    )
 
 
 class Assignment(base.Assignment):
