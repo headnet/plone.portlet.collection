@@ -164,6 +164,9 @@ class Renderer(base.Renderer):
             except:
                 results = collection.queryCatalog()
 
+            if not results:
+                return []
+
             try:
                 results = results._sequence
             except AttributeError:
