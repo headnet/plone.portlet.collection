@@ -7,7 +7,7 @@
                 getIcon nocall:plone_view/getIcon;"
     tal:attributes="class string:portlet portletCollection ${view/css_class}">
 
-    <dt class="portletHeader">
+    <dt class="portletHeader" tal:condition="not:view/omit_border">
         <span class="portletTopLeft"></span>
         <a tal:attributes="href collection_url" tal:omit-tag="not:view/data/show_more">
             <span tal:content="view/data/header" />
@@ -45,7 +45,7 @@
       </span>
     </tal:block>
 
-    <dd class="portletFooter">
+    <dd class="portletFooter" tal:condition="not:view/omit_border">
         <span class="portletBottomLeft"></span>
         <span tal:condition="view/data/show_more">
         <a tal:attributes="href collection_url">

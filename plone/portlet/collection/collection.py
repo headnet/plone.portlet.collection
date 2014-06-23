@@ -82,6 +82,15 @@ class ICollectionPortlet(IPortletDataProvider):
         default=u''
     )
 
+    omit_border = schema.Bool(
+        title=_(u"Omit portlet border"),
+        description=_(u"Tick this box if you want to render the text above "
+                      u"without the standard header, border or footer."),
+        required=True,
+        default=False
+    )
+
+
 
 class Assignment(base.Assignment):
     """
@@ -99,10 +108,11 @@ class Assignment(base.Assignment):
     show_more = True
     show_dates = False
     no_results_text = ''
+    omit_border = False
 
     def __init__(self, header=u"", target_collection=None, limit=None,
                  random=False, show_more=True, show_dates=False,
-                 no_results_text=''):
+                 no_results_text='', omit_border=False):
         self.header = header
         self.target_collection = target_collection
         self.limit = limit
@@ -110,6 +120,7 @@ class Assignment(base.Assignment):
         self.show_more = show_more
         self.show_dates = show_dates
         self.no_results_text = no_results_text
+        self.omit_border = omit_border
 
     @property
     def title(self):
@@ -220,6 +231,10 @@ class Renderer(base.Renderer):
             if not sm.checkPermission('View', result):
                 result = None
         return result
+
+    @property
+    def omit_border(self):
+        return self.data.omit_border
 
 
 class AddForm(base.AddForm):
